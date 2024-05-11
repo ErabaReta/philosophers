@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-CFILES = main.c ft_atoi.c
+CFILES = main.c ft_atoi.c exiter.c
 OFILES = $(CFILES:.c=.o)
 RM = rm -rf
 NAME = philo

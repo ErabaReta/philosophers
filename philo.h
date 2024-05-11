@@ -25,4 +25,6 @@ typedef struct	s_vars
 
 //=
 long	ft_atoi(const char *str);
+t_vars *get_vars(void);
+void	exiter();
 #endif
