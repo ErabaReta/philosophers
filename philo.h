@@ -8,19 +8,29 @@
 # include <stdlib.h>
 # include <pthread.h>
 #include <sys/time.h>
+//===================================================================
 
 typedef struct	s_vars
 {
 	int	number_of_philosophers;
-	int	time_to_die;
-	int	time_to_eat ;
-	int time_to_sleep ;
+	size_t	time_to_die;
+	size_t	time_to_eat ;
+	size_t time_to_sleep ;
 	int umber_of_times_each_philosopher_must_eat;
-	pthread_t		*philo;
+	char	simulation_finished;
+	pthread_t		*philos;
+	pthread_t		*watchers;
 	pthread_mutex_t	*forks;
-	struct timeval	initial_timeval;
+	pthread_mutex_t log_lock;
+	size_t	initial_timeval;
 }	t_vars;
-
+//===================================================================
+typedef struct	s_philo
+{
+	int		id;
+	pthread_mutex_t	watcher_lock;
+	size_t last_meal; 
+}	t_philo;
 
 
 //=
