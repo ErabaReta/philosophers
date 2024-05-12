@@ -1,41 +1,58 @@
 #include "philo.h"
 
-void    thinking(int id)
+size_t  get_time_milliseconds(void)
 {
     struct timeval tv;
+    size_t  time;
+
     gettimeofday(&tv, NULL);
-    printf("seconds %ld , micors %ld", tv.tv_sec - get_vars()->initial_timeval.tv_sec, tv.tv_usec - get_vars()->initial_timeval.tv_usec);
-    printf(" %d is thinking\n", id + 1);
+    time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    return (time);
 }
 
-void    eating(int id)
+void    logger(int id, char *msg)
 {
-    struct timeval tv;
+    pthread_mutex_lock(&get_vars()->log_lock);
+    if (get_vars()->simulation_finished == 1)
+    {
+         pthread_mutex_unlock(&get_vars()->log_lock);
+         return ;
+    }
+    printf("%lu %d %s\n", get_time_milliseconds() - get_vars()->initial_timeval, id + 1, msg);
+    pthread_mutex_unlock(&get_vars()->log_lock);
+}
 
-    pthread_mutex_lock(&get_vars()->forks[id]);
-    if (id == get_vars()->number_of_philosophers - 1)
+void    thinking(t_philo *philo)
+{
+    logger(philo->id, "is thinking");
+}
+
+void eating(t_philo *philo)
+{
+    if (philo->id == get_vars()->number_of_philosophers - 1) {
         pthread_mutex_lock(&get_vars()->forks[0]);
-    else
-        pthread_mutex_lock(&get_vars()->forks[id + 1]);
-    gettimeofday(&tv, NULL);
-    printf("seconds %ld , micors %ld", tv.tv_sec - get_vars()->initial_timeval.tv_sec, tv.tv_usec - get_vars()->initial_timeval.tv_usec);
-    printf(" %d is eating\n", id + 1);
-    usleep(get_vars()->time_to_eat);
-
-     pthread_mutex_unlock(&get_vars()->forks[id]);
-    if (id == get_vars()->number_of_philosophers - 1)
+        logger(philo->id, "has taken a fork");
+        pthread_mutex_lock(&get_vars()->forks[philo->id]);
+        logger(philo->id, "has taken a fork");
+    } else {
+        pthread_mutex_lock(&get_vars()->forks[philo->id]);
+        logger(philo->id, "has taken a fork");
+        pthread_mutex_lock(&get_vars()->forks[philo->id + 1]);
+        logger(philo->id, "has taken a fork");
+    }
+    philo->last_meal = get_time_milliseconds();
+    logger(philo->id, "is eating");
+    usleep(get_vars()->time_to_eat * 1000);
+    pthread_mutex_unlock(&get_vars()->forks[philo->id]);
+    if (philo->id == get_vars()->number_of_philosophers - 1)
         pthread_mutex_unlock(&get_vars()->forks[0]);
     else
-        pthread_mutex_unlock(&get_vars()->forks[id + 1]);
+        pthread_mutex_unlock(&get_vars()->forks[philo->id + 1]);
 }
-void    sleeping(int id)
+void    sleeping(t_philo *philo)
 {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    printf("seconds %ld , micors %ld", tv.tv_sec - get_vars()->initial_timeval.tv_sec, tv.tv_usec - get_vars()->initial_timeval.tv_usec);
-    printf(" %d is sleeping\n", id + 1);
-    usleep(get_vars()->time_to_sleep);
-
+    logger(philo->id, "is sleeping");
+    usleep(get_vars()->time_to_sleep * 1000);
 }
 
 
@@ -45,19 +62,50 @@ t_vars *get_vars(void)
     return  (&vars);
 }
 
-void    *routine(void *id)
+int died(t_philo *philo)
 {
-    while (1)
+    if (get_time_milliseconds() - philo->last_meal >= get_vars()->time_to_die)
     {
-        thinking(*(int *)id);
-        eating(*(int *)id);
-        sleeping(*(int *)id);
+        pthread_mutex_lock(&(philo->watcher_lock));
+        get_vars()->simulation_finished = 1;
+        printf("%lu %d died\n", get_time_milliseconds() - get_vars()->initial_timeval, philo->id + 1);
+        // exiter(0);///
+        pthread_mutex_unlock(&(philo->watcher_lock));
+        return (1);
     }
-    // printf ("my id is %d\n", *(int *)id);
-    return NULL;
+    return (0);
 }
 
-void init_vars(char **av, int ac)
+void    *watching(void *philo)
+{
+    while (get_vars()->simulation_finished != 1 && !died(philo))
+    {
+        usleep(100);
+    }
+    return philo;
+}
+
+void    *routine(void *philo)
+{
+    if (pthread_create(&(get_vars()->watchers[((t_philo *)philo)->id]), NULL, watching, philo) != 0)
+    {
+        printf("failed to create thread\n");
+        exiter(1);
+    }
+    while (get_vars()->simulation_finished != 1)
+    {
+        thinking((t_philo *)philo);
+        eating((t_philo *)philo);
+        sleeping((t_philo *)philo);
+    }
+    if (pthread_join(get_vars()->watchers[*(int *)philo], NULL) != 0)
+    {
+        printf("failed to join thread\n");
+    }
+    return philo;
+}
+
+t_philo **init_vars(char **av, int ac)
 {
     t_vars *vars;
     int i;
@@ -71,35 +119,41 @@ void init_vars(char **av, int ac)
         vars->umber_of_times_each_philosopher_must_eat = ft_atoi(av[5]);
     else
         vars->umber_of_times_each_philosopher_must_eat = -1;
-    vars->philo = (pthread_t *)malloc(sizeof(pthread_t) * vars->number_of_philosophers); 
+    vars->philos = (pthread_t *)malloc(sizeof(pthread_t) * vars->number_of_philosophers);
+    vars->watchers = (pthread_t *)malloc(sizeof(pthread_t) * vars->number_of_philosophers);
     vars->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * vars->number_of_philosophers); 
-    gettimeofday(&(vars->initial_timeval), NULL);
+    vars->initial_timeval = get_time_milliseconds();
     i = 0;
+    t_philo **philo = (t_philo **)malloc(sizeof(t_philo *) * vars->number_of_philosophers);
     while (i < vars->number_of_philosophers)
     {
+        philo[i] = (t_philo *)malloc(sizeof(t_philo) * 1);
+        philo[i]->id = i;
+        pthread_mutex_init(&(philo[i]->watcher_lock), NULL);
+        philo[i]->last_meal = get_time_milliseconds();//get_vars()->initial_timeval;
         pthread_mutex_init(&(vars->forks[i]), NULL);
         i++;
     }
+    vars->simulation_finished = 0;
+    return (philo);
 }
 
 int main(int ac, char **av)
 {
     int i;
-    int *philo_id;
-    int *joined;
+    t_philo **philo;
+    t_philo *joined;
 
     if (ac != 5 && ac != 6)
     {
         printf("wrong args\n");
         return (1);
     }
-    init_vars(av, ac);
+    philo = init_vars(av, ac);
     i = 0;
     while (i < get_vars()->number_of_philosophers)
     {
-        philo_id = (int *)malloc(sizeof(int) * 1);
-        *philo_id = i; 
-        if (pthread_create(&(get_vars()->philo[i]), NULL, routine, philo_id) != 0)
+        if (pthread_create(&(get_vars()->philos[i]), NULL, routine, philo[i]) != 0)
         {
             printf("failed to create thread\n");
             exiter(1);
@@ -109,11 +163,13 @@ int main(int ac, char **av)
     i = 0;
     while (i < get_vars()->number_of_philosophers)
     {
-        if (pthread_join(get_vars()->philo[i], (void **)&joined) != 0)
+        if (pthread_join(get_vars()->philos[i], (void **)&joined) != 0)
         {
             printf("failed to join thread %d\n", i);
-            free(joined);
+            continue ;
         }
+            pthread_mutex_destroy(&(joined->watcher_lock));
+            free(joined);
         i++;
     }
     exiter(0);
