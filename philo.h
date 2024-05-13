@@ -28,8 +28,17 @@ typedef struct	s_vars
 typedef struct	s_philo
 {
 	int		id;
+	size_t	last_think;
+	char	think_logged;
+	size_t	last_meal; 
+	char	meal_logged;
+	size_t	last_sleep;
+	char	sleep_logged;
+	size_t	last_left_fork;
+	char	left_fork_logged;
+	size_t	last_right_fork;
+	char	right_fork_logged;
 	pthread_mutex_t	watcher_lock;
-	size_t last_meal; 
 }	t_philo;
 
 
