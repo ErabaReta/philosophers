@@ -80,8 +80,9 @@ void    *watching(void *philo)
 {
     while (get_vars()->simulation_finished != 1 && !died(philo))
     {
-        usleep(100);
+        usleep(1234);
     }
+    pthread_mutex_destroy(&(((t_philo *)philo)->watcher_lock));
     return philo;
 }
 
@@ -122,9 +123,9 @@ t_philo **init_vars(char **av, int ac)
     vars->philos = (pthread_t *)malloc(sizeof(pthread_t) * vars->number_of_philosophers);
     vars->watchers = (pthread_t *)malloc(sizeof(pthread_t) * vars->number_of_philosophers);
     vars->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * vars->number_of_philosophers); 
-    vars->initial_timeval = get_time_milliseconds();
     i = 0;
     t_philo **philo = (t_philo **)malloc(sizeof(t_philo *) * vars->number_of_philosophers);
+    vars->initial_timeval = get_time_milliseconds();
     while (i < vars->number_of_philosophers)
     {
         philo[i] = (t_philo *)malloc(sizeof(t_philo) * 1);
