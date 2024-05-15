@@ -18,10 +18,13 @@ typedef struct	s_vars
 	size_t time_to_sleep ;
 	int umber_of_times_each_philosopher_must_eat;
 	char	simulation_finished;
+	pthread_mutex_t	simulation_started;
+	pthread_mutex_t	state_lock;
 	pthread_t		*philos;
 	pthread_t		*watchers;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t log_lock;
+	pthread_mutex_t	time_lock;
 	size_t	initial_timeval;
 }	t_vars;
 //===================================================================
@@ -30,14 +33,19 @@ typedef struct	s_philo
 	int		id;
 	size_t	last_think;
 	char	think_logged;
-	size_t	last_meal; 
-	char	meal_logged;
+	pthread_mutex_t	think_lock;
+	size_t	last_eat; 
+	char	eat_logged;
+	pthread_mutex_t	eat_lock;
 	size_t	last_sleep;
 	char	sleep_logged;
+	pthread_mutex_t	sleep_lock;
 	size_t	last_left_fork;
 	char	left_fork_logged;
+	pthread_mutex_t	left_fork_lock;
 	size_t	last_right_fork;
 	char	right_fork_logged;
+	pthread_mutex_t	right_fork_lock;
 	pthread_mutex_t	watcher_lock;
 }	t_philo;
 
@@ -46,4 +54,5 @@ typedef struct	s_philo
 long	ft_atoi(const char *str);
 t_vars *get_vars(void);
 void	exiter();
+
 #endif
