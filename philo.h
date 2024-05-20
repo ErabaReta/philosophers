@@ -36,19 +36,21 @@ typedef struct	s_philo
 	char	think_logged;
 	pthread_mutex_t	think_lock;
 	size_t	last_eat;
+	
 	char	eat_logged;
 	pthread_mutex_t	eat_lock;
-	size_t	last_sleep;
+
 	char	sleep_logged;
 	pthread_mutex_t	sleep_lock;
-	size_t	last_left_fork;
-	char	left_fork_logged;
-	pthread_mutex_t	left_fork_lock;
-	size_t	last_right_fork;
-	char	right_fork_logged;
-	pthread_mutex_t	right_fork_lock;
+
+	char	fork_logged;
+	pthread_mutex_t	fork_lock;
+
 	pthread_mutex_t	watcher_lock;
 	pthread_mutex_t	time_to_eat_lock;
+	int				its_time_to_eat;
+
+	struct timeval	tv;
 	t_vars			*vars;
 }	t_philo;
 
@@ -56,6 +58,6 @@ typedef struct	s_philo
 //=
 long	ft_atoi(const char *str);
 // t_vars *get_vars(void);
-void	exiter(int err, t_philo *philo);
+int	exiter(int err, t_philo *philo);
 
 #endif

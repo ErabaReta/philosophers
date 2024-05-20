@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void	exiter(int err, t_philo *philo)
+int	exiter(int err, t_philo *philo)
 {
 	int	i;
 
@@ -15,5 +15,5 @@ void	exiter(int err, t_philo *philo)
 	pthread_mutex_destroy(&(philo->vars->time_lock));
 	pthread_mutex_unlock(&(philo->vars->state_lock));
 	pthread_mutex_destroy(&(philo->vars->state_lock));
-	exit(err);
+	return (err);
 }
