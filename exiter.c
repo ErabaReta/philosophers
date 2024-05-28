@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:41 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/05/24 20:49:28 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/05/27 13:56:26 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ int	exiter(int err, t_philo **philo, t_vars vars)
 		i++;
 	}
 	free(philo);
+	free(vars.forks);
+	free(vars.philos);
+	free(vars.watchers);
 	pthread_mutex_destroy(&(vars.time_lock));
 	// pthread_mutex_unlock(&(vars.state_lock));
 	// pthread_mutex_destroy(&(vars.state_lock));

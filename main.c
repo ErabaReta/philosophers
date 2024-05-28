@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/05/27 13:15:11 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:17:12 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void eating(t_philo *philo)
 	//=
 	while ((philo->vars->number_of_philosophers % 2) == 1 && !time_to_eat(philo))
 	{
-		usleep(10);
+		usleep(1000);
 	}
 	// if (philo[i]->its_time_to_eat == 0 && time_to_eat(philo[i]))
 	//=
@@ -210,7 +210,7 @@ int main(int ac, char **av)
     t_philo **philo;
     // t_philo *joined;
 	t_vars vars;
-	pthread_t	noter;
+	// pthread_t	noter;
 	pthread_t		watcher;
 
     if (ac != 5 && ac != 6)
@@ -240,11 +240,11 @@ int main(int ac, char **av)
 	// 	i++;
 	// }
 	//====
-	if (pthread_create(&noter, NULL, noting, philo) != 0)
-   	{
-    	printf("failed to create noter thread\n");
-    	return (1);////
-    }
+	// if (pthread_create(&noter, NULL, noting, philo) != 0)
+   	// {
+    // 	printf("failed to create noter thread\n");
+    // 	return (1);////
+    // }
     	// pthread_detach(noter);
 	//=====
 	if (pthread_create(&watcher, NULL, watching, philo) != 0)
@@ -273,21 +273,14 @@ int main(int ac, char **av)
         i++;
     }
 	set_all_finished(philo);//////////////
-	if(all_is_finished(philo))
-	{
-		
-	printf("all is finished\n");
-	// printf("here\n");
-	// exit(0);
-	}
 	if (pthread_join(watcher, NULL) != 0)
     {
         printf("failed to join watcher thread \n");
     }
-	if (pthread_join(noter, NULL) != 0)
-    {
-        printf("failed to join noter thread\n");
-    }
+	// if (pthread_join(noter, NULL) != 0)
+    // {
+    //     printf("failed to join noter thread\n");
+    // }
 
     return (exiter(0, philo, vars));
 }
