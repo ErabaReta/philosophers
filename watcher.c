@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:02 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/05/27 14:16:52 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/05/29 11:39:09 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void    logger(t_philo *philo, char *msg)
          pthread_mutex_unlock(&(philo->vars->log_lock));
          return ;
     }
-    printf("%lu %d %s\n", get_time_milliseconds(philo) - philo->vars->initial_timeval, philo->id + 1, msg);
+    printf("%lu %d %s\n", get_time_milliseconds(philo->tv) - philo->vars->initial_timeval, philo->id + 1, msg);
 	
 	// ft_putnbr(get_time_milliseconds(philo) - philo->vars->initial_timeval);
 	// ft_putchar(' ');
@@ -95,7 +95,7 @@ int	time_to_eat(t_philo *philo)
 	size_t	current_time;
 	size_t	turn;
 
-	current_time = get_time_milliseconds(philo) - philo->vars->initial_timeval;
+	current_time = get_time_milliseconds(philo->tv) - philo->vars->initial_timeval;
 	// if ((philo->vars->number_of_philosophers % 2) == 0)
 	// {
 	// 	turn = ((current_time) / (philo->vars->time_to_eat)) % 2;
@@ -168,7 +168,7 @@ int died(t_philo **philo, int i)
 		pthread_mutex_unlock(&(philo[i]->last_eat_lock));
 		return (0);
 	}
-	if (get_time_milliseconds(philo[i]) - philo[i]->last_eat > philo[i]->vars->time_to_die)//////////////////////////////////
+	if (get_time_milliseconds(philo[i]->vars->tv) - philo[i]->last_eat > philo[i]->vars->time_to_die)//////////////////////////////////
 	{
 		pthread_mutex_unlock(&(philo[i]->last_eat_lock));
 		// printf("%lu %d died\n", get_time_milliseconds(philo[i]) - philo[i]->vars->initial_timeval, philo[i]->id + 1);
@@ -178,7 +178,7 @@ int died(t_philo **philo, int i)
 		// philo->simulation_finished = 1;
 		// pthread_mutex_unlock(&((philo->vars->state_lock)));
 		pthread_mutex_lock(&(philo[i]->vars->log_lock));
-		printf("%lu %d died\n", get_time_milliseconds(philo[i]) - philo[i]->vars->initial_timeval, philo[i]->id + 1);
+		printf("%lu %d died\n", get_time_milliseconds(philo[i]->vars->tv) - philo[i]->vars->initial_timeval, philo[i]->id + 1);
 		pthread_mutex_unlock(&(philo[i]->vars->log_lock));
 		return (1);
 	}
