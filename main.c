@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/05/27 14:17:12 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/05/29 11:35:54 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ int is_finished(t_philo *philo)
     return (0);
 }
 
-size_t  get_time_milliseconds(t_philo *philo)
+size_t  get_time_milliseconds(struct timeval tv)
 {
-    gettimeofday(&(philo->tv), NULL);
+    gettimeofday(&(tv), NULL);
 	// printf("usec => %ld\n", philo->tv.tv_usec);
 	// if (((philo->tv.tv_usec / 100) % 10) >= 500)
     // 	return (philo->tv.tv_sec * 1000 + philo->tv.tv_usec / 1000 + 1);
-    return (philo->tv.tv_sec * 1000 + philo->tv.tv_usec / 1000);
+    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 
@@ -89,7 +89,7 @@ void eating(t_philo *philo)
 		pthread_mutex_unlock(&(philo->eat_lock));
 		
 	pthread_mutex_lock(&(philo->last_eat_lock));
-    philo->last_eat = get_time_milliseconds(philo);
+    philo->last_eat = get_time_milliseconds(philo->tv);
 	philo->count_meals++;
 	pthread_mutex_unlock(&(philo->last_eat_lock));
 		// printf("philo ==> %d  ||| philo->count_meals %d \n",philo->id + 1, philo->count_meals);//
@@ -255,10 +255,10 @@ int main(int ac, char **av)
     	// pthread_detach(watcher);
 	i = 0;
 	usleep(5000);
-	vars.initial_timeval = get_time_milliseconds(*philo);
+	vars.initial_timeval = get_time_milliseconds((*philo)->tv);
 	while (i < vars.number_of_philosophers)
 	{
-		philo[i]->last_eat = get_time_milliseconds(*philo);
+		philo[i]->last_eat = get_time_milliseconds((*philo)->tv);
 		i++;
 	}
 	pthread_mutex_unlock(&(vars.start_lock));

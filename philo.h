@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:27 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/05/25 21:46:32 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/05/29 11:37:16 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct	s_vars
 	pthread_mutex_t	time_lock;
 	pthread_mutex_t	start_lock;
 	size_t	initial_timeval;
+	struct timeval	tv;
 }	t_vars;
 //===================================================================
 typedef struct	s_philo
@@ -71,7 +72,7 @@ typedef struct	s_philo
 }	t_philo;
 
 //=
-size_t  get_time_milliseconds(t_philo *philo);
+size_t  get_time_milliseconds(	struct timeval	tv);
 int is_finished(t_philo *philo);
 int	all_is_finished(t_philo **philo);
 //=
