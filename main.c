@@ -74,7 +74,9 @@ int	main(int ac, char **av)
 		return (2);
 	}
 	pthread_mutex_lock(&(vars.start_lock));
-	if (create_threads(&vars, philo, &watcher) == -1)
+	if (vars.number_of_philosophers == 1)
+		create_lonely_philo(&vars, philo, &watcher);
+	else if (create_threads(&vars, philo, &watcher) == -1)
 		return (exiter(3, philo, vars));
 	pthread_mutex_unlock(&(vars.start_lock));
 	i = 0;

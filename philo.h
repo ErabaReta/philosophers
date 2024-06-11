@@ -82,4 +82,5 @@ void	ft_putchar(char c);
 int		parsing(t_vars *vars, char **av, int ac);
 void	eating(t_philo *philo);
 //=
+int		create_lonely_philo(t_vars *vars, t_philo **philo, pthread_t *watcher);
 #endif

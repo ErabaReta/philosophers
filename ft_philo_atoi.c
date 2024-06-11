@@ -29,7 +29,7 @@ static int	sign_giver(char *str, size_t *i)
 long	ft_philo_atoi(const char *str)
 {
 	size_t			i;
-	size_t			nbr;
+	long long			nbr;
 	int				sign;
 	int				counter;
 
