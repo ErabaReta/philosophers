@@ -1,6 +1,6 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread #-g #-fsanitize=thread
-CFILES = main.c ft_atoi.c exiter.c watcher.c  ft_itoa.c printer.c #noter.c
+CFLAGS = -Wall -Wextra -Werror -pthread #-O3# -g3 -fsanitize=thread
+CFILES = main.c ft_philo_atoi.c exiter.c watcher.c logged_checkers.c philo.c init.c eating.c parsing.c #printer.c # ft_itoa.c noter.c
 OFILES = $(CFILES:.c=.o)
 RM = rm -rf
 NAME = philo
