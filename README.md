@@ -86,6 +86,7 @@ philosopher dies.
 Any other philosopher number N sits between philosopher number N - 1 and philoso-
 pher number N + 1.
 
+And the most important thing the program must not have any data races.
 ## logs:
 
 
@@ -114,5 +115,3 @@ and X with the philosopher number.
 after the actual death of the philosopher.
 
 • Again, philosophers should avoid dying!
-
-And the most important thing your program must not have any data races.
