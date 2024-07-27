@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/11 14:03:31 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/07/27 19:11:13 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,18 @@ int	create_threads(t_vars *vars, t_philo **philo, pthread_t	*watcher)
 	return (0);
 }
 
+int	returner(int ac, t_vars vars)
+{
+	if (ac != 5 && ac != 6)
+	{
+		printf("wrong number of args\n");
+		return (1);
+	}
+	if (vars.times_must_eat == 0)
+		return (0);
+	return (2);
+}
+
 int	main(int ac, char **av)
 {
 	int			i;
@@ -65,19 +77,19 @@ int	main(int ac, char **av)
 	t_vars		vars;
 	pthread_t	watcher;
 
-	if ((ac != 5 && ac != 6) || parsing(&vars, av, ac) == -1)
-		return (1);
+	if (parsing(&vars, av, ac) == -1)
+		return (returner(ac, vars));
 	philo = init_vars(&vars);
 	if (philo == NULL)
 	{
 		printf("allocation failed\n");
-		return (2);
+		return (3);
 	}
 	pthread_mutex_lock(&(vars.start_lock));
 	if (vars.number_of_philosophers == 1)
 		create_lonely_philo(&vars, philo, &watcher);
 	else if (create_threads(&vars, philo, &watcher) == -1)
-		return (exiter(3, philo, vars));
+		return (exiter(4, philo, vars));
 	pthread_mutex_unlock(&(vars.start_lock));
 	i = 0;
 	while (i < vars.number_of_philosophers)

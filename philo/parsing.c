@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 17:03:30 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/10 22:18:03 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/07/27 19:09:51 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	parsing(t_vars *vars, char **av, int ac)
 {
+	if (ac != 5 && ac != 6)
+		return (-1);
 	vars->number_of_philosophers = ft_philo_atoi(av[1]);
 	if (vars->number_of_philosophers == 0)
 		return (-1);
@@ -34,5 +36,7 @@ int	parsing(t_vars *vars, char **av, int ac)
 		printf("Error: bad argument\n");
 		return (-1);
 	}
+	if (vars->times_must_eat == 0)
+		return (-1);
 	return (0);
 }

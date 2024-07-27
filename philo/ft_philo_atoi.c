@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_philo_atoi.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:38 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/10 22:24:45 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/07/26 14:21:03 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ static int	sign_giver(char *str, size_t *i)
 
 long	ft_philo_atoi(const char *str)
 {
-	size_t			i;
-	long long			nbr;
-	int				sign;
-	int				counter;
+	size_t		i;
+	long long	nbr;
+	int			sign;
+	int			counter;
 
 	i = 0;
 	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
