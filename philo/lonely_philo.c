@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/07/26 14:20:30 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/08/10 19:55:51 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ void	*lonely_routine(void *ptr)
 	philo->fork_logged = 0;
 	pthread_mutex_unlock(&(philo->fork_lock));
 	while (!is_finished(philo))
-		usleep(1000);
+		wait_for(philo, 1);
+		// usleep(1000);
 	pthread_mutex_unlock(&philo->vars->forks[0]);
 	return (philo);
 }
@@ -44,7 +45,6 @@ int	create_lonely_philo(t_vars *vars, t_philo **philo, pthread_t	*watcher)
 		printf("failed to create watcher thread\n");
 		return (-1);
 	}
-	usleep(5000);
 	vars->initial_timeval = get_time_milliseconds((*philo)->tv);
 	philo[0]->last_eat = get_time_milliseconds((*philo)->tv);
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 21:08:16 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/09 21:09:27 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/08/10 20:23:43 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ void	sleeping(t_philo *philo)
 	pthread_mutex_lock(&(philo->sleep_lock));
 	philo->sleep_logged = 0;
 	pthread_mutex_unlock(&(philo->sleep_lock));
-	usleep(philo->vars->time_to_sleep * 1000);
+	wait_for(philo, philo->vars->time_to_sleep);
+	// usleep(philo->vars->time_to_sleep * 1000);
+	
 }
 
 void	*routine(void *ptr)
@@ -37,12 +39,13 @@ void	*routine(void *ptr)
 	if (((philo->id % 2) == 1)
 		|| (philo->id == (philo->vars->number_of_philosophers - 1)))
 		usleep(3000);
+	// wait_for(philo, 3);
 	while (!is_finished(philo))
 	{
 		thinking(philo);
 		eating(philo);
-		if (philo->count_meals == philo->vars->times_must_eat)
-			break ;
+		// if (philo->count_meals == philo->vars->times_must_eat)
+		// 	break ;
 		sleeping(philo);
 	}
 	return (philo);

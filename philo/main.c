@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/07/27 19:11:13 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/08/10 19:56:09 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	create_threads(t_vars *vars, t_philo **philo, pthread_t	*watcher)
 		return (-1);
 	}
 	i = 0;
-	usleep(5000);
 	vars->initial_timeval = get_time_milliseconds((*philo)->tv);
 	while (i < vars->number_of_philosophers)
 		philo[i++]->last_eat = get_time_milliseconds((*philo)->tv);
