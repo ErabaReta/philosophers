@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 21:10:04 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/10 22:40:03 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/07/29 11:42:38 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_philo	**init_philos(t_philo **philo, t_vars *vars)
 	int	i;
 
 	i = 0;
-	while (i < vars->number_of_philosophers)
+	while (philo != NULL && i < vars->number_of_philosophers)
 	{
 		philo[i] = (t_philo *)malloc(sizeof(t_philo) * 1);
 		if (philo[i] == NULL)

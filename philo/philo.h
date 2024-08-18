@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:27 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/11 14:06:03 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/08/10 19:13:08 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,9 @@ void	ft_putchar(char c);
 //=====================================================
 int		parsing(t_vars *vars, char **av, int ac);
 void	eating(t_philo *philo);
-//=
+//===
 int		create_lonely_philo(t_vars *vars, t_philo **philo, pthread_t *watcher);
+//===
+void	wait_for(t_philo *philo, size_t time);
+
 #endif
