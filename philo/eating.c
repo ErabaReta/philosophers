@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 16:57:13 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/08/10 20:21:23 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/05 00:48:45 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ void	eating(t_philo *philo)
 	while ((philo->vars->number_of_philosophers % 2) == 1
 		&& !time_to_eat(philo) && !is_finished(philo))
 		wait_for(philo, 1);
-		// usleep(1000);
 	taking_forks(philo);
 	pthread_mutex_lock(&(philo->eat_lock));
 	philo->eat_logged = 0;
@@ -98,7 +97,6 @@ void	eating(t_philo *philo)
 	philo->count_meals++;
 	pthread_mutex_unlock(&(philo->last_eat_lock));
 	wait_for(philo, philo->vars->time_to_eat);
-	// usleep(philo->vars->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->vars->forks[philo->id]);
 	if (philo->id == philo->vars->number_of_philosophers - 1)
 		pthread_mutex_unlock(&philo->vars->forks[0]);

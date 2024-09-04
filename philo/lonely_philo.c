@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/08/10 19:55:51 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/05 00:48:54 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	*lonely_routine(void *ptr)
 	pthread_mutex_unlock(&(philo->fork_lock));
 	while (!is_finished(philo))
 		wait_for(philo, 1);
-		// usleep(1000);
 	pthread_mutex_unlock(&philo->vars->forks[0]);
 	return (philo);
 }
