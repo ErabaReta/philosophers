@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/08/10 19:56:09 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/05 00:56:25 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int	create_threads(t_vars *vars, t_philo **philo, pthread_t	*watcher)
 		}
 		i++;
 	}
-	i = 0;
 	if (pthread_create(watcher, NULL, watching, philo) != 0)
 	{
 		printf("failed to create watcher thread\n");

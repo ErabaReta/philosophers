@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:02 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/08/17 14:44:57 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/05 00:50:31 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,6 @@ int	all_is_finished(t_philo **philo)
 int	died(t_philo **philo, int i)
 {
 	pthread_mutex_lock(&(philo[i]->last_eat_lock));
-	// if (philo[i]->count_meals == philo[i]->vars->times_must_eat)
-	// {
-	// 	pthread_mutex_unlock(&(philo[i]->last_eat_lock));
-	// 	return (0);
-	// }
 	if (get_time_milliseconds(philo[i]->vars->tv)
 		- philo[i]->last_eat > philo[i]->vars->time_to_die)
 	{
@@ -66,43 +61,25 @@ int	died(t_philo **philo, int i)
 	return (0);
 }
 
-int	all_ate(t_philo **philo) //TODO make another one this do not work properly
+int	all_ate(t_philo **philo)
 {
 	int	n_philos;
 	int	i;
 
-	pthread_mutex_lock(&((*philo)->last_eat_lock));
 	n_philos = (*philo)->vars->number_of_philosophers;
-	if (n_philos % 2 == 1)
+	i = 0;
+	while (i < n_philos)
 	{
-		if (philo[n_philos - 1]->count_meals == philo[n_philos - 1]->vars->times_must_eat)
+		pthread_mutex_lock(&(philo[i]->last_eat_lock));
+		if (philo[i]->count_meals < philo[i]->vars->times_must_eat)
 		{
-			pthread_mutex_unlock(&((*philo)->last_eat_lock));
-			return (1);
-		}
-		else
-		{
-			pthread_mutex_unlock(&((*philo)->last_eat_lock));
+			pthread_mutex_unlock(&(philo[i]->last_eat_lock));
 			return (0);
 		}
+		pthread_mutex_unlock(&(philo[i]->last_eat_lock));
+		i++;
 	}
-	else
-	{
-		i = 1;
-
-		while (i < n_philos)
-		{
-			// printf("philo[i]->count_meals==> %d || philo[i]->vars->times_must_eat ==> %ld \n", philo[i]->count_meals, philo[i]->vars->times_must_eat);
-			if (philo[i]->count_meals < philo[i]->vars->times_must_eat)
-			{
-				pthread_mutex_unlock(&((*philo)->last_eat_lock));
-				return (0);
-			}
-			i++;
-		}
-		pthread_mutex_unlock(&((*philo)->last_eat_lock));
-		return (1);
-	}
+	return (1);
 }
 
 void	*watching(void *ptr)
@@ -136,8 +113,6 @@ void	*watching(void *ptr)
 			logger(philo[i], "is sleeping");
 		if (++i == (*philo)->vars->number_of_philosophers)
 			i = 0;
-		// usleep(1);
-		// wait_for(philo[i], 1);
 	}
 	return (NULL);
 }
