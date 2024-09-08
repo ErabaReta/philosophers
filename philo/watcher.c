@@ -6,44 +6,11 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:02 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/09/05 00:50:31 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/08 21:31:53 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	set_all_finished(t_philo **philo)
-{
-	int	i;
-
-	i = 0;
-	while (i < (*philo)->vars->number_of_philosophers)
-	{
-		pthread_mutex_lock(&((philo[i]->state_lock)));
-		philo[i]->simulation_finished = 1;
-		pthread_mutex_unlock(&((philo[i]->state_lock)));
-		i++;
-	}
-}
-
-int	all_is_finished(t_philo **philo)
-{
-	int	i;
-
-	i = 0;
-	while (i < (*philo)->vars->number_of_philosophers)
-	{
-		pthread_mutex_lock(&((philo[i]->state_lock)));
-		if (philo[i]->simulation_finished == 0)
-		{
-			pthread_mutex_unlock(&((philo[i]->state_lock)));
-			return (0);
-		}
-		pthread_mutex_unlock(&((philo[i]->state_lock)));
-		i++;
-	}
-	return (1);
-}
 
 int	died(t_philo **philo, int i)
 {
@@ -53,7 +20,7 @@ int	died(t_philo **philo, int i)
 	{
 		pthread_mutex_unlock(&(philo[i]->last_eat_lock));
 		printf("%lu %d died\n", get_time_milliseconds(philo[i]->vars->tv)
-			- philo[i]->vars->initial_timeval, philo[i]->id + 1);
+			- philo[i]->vars->initial_timeval, philo[i]->id);
 		set_all_finished(philo);
 		return (1);
 	}
@@ -61,25 +28,70 @@ int	died(t_philo **philo, int i)
 	return (0);
 }
 
-int	all_ate(t_philo **philo)
+int	last_group_ate(t_philo **philo, int n_philos)
 {
-	int	n_philos;
 	int	i;
 
-	n_philos = (*philo)->vars->number_of_philosophers;
-	i = 0;
-	while (i < n_philos)
+	i = n_philos - 1;
+	while (i >= 0)
 	{
 		pthread_mutex_lock(&(philo[i]->last_eat_lock));
-		if (philo[i]->count_meals < philo[i]->vars->times_must_eat)
+		if ((philo[i]->count_meals < philo[i]->vars->times_must_eat)
+			|| have_ate(philo[i]))
 		{
 			pthread_mutex_unlock(&(philo[i]->last_eat_lock));
 			return (0);
 		}
 		pthread_mutex_unlock(&(philo[i]->last_eat_lock));
-		i++;
+		i -= 2;
 	}
+	set_all_finished(philo);
 	return (1);
+}
+
+int	all_ate(t_philo **philo)
+{
+	int	n_philos;
+
+	if ((*philo)->vars->times_must_eat == -1)
+		return (0);
+	n_philos = (*philo)->vars->number_of_philosophers;
+	if (n_philos % 2 == 1)
+	{
+		pthread_mutex_lock(&(philo[n_philos - 1]->last_eat_lock));
+		if (philo[n_philos - 1]->count_meals
+			>= (*philo)->vars->times_must_eat
+			&& !have_ate(philo[n_philos -1]))
+		{
+			pthread_mutex_unlock(&(philo[n_philos - 1]->last_eat_lock));
+			set_all_finished(philo);
+			return (1);
+		}
+		else
+		{
+			pthread_mutex_unlock(&(philo[n_philos - 1]->last_eat_lock));
+			return (0);
+		}
+	}
+	else
+		return (last_group_ate(philo, n_philos));
+}
+
+void	log_actions(t_philo *philo)
+{
+	if (have_tought(philo))
+		logger(philo, "is thinking");
+	else if (had_fork(philo))
+		logger(philo, "has taken a fork");
+	else if (have_ate(philo))
+	{
+		logger(philo, "is eating");
+		pthread_mutex_lock(&(philo->eat_lock));
+		philo->eat_logged = 1;
+		pthread_mutex_unlock(&(philo->eat_lock));
+	}
+	else if (have_slept(philo))
+		logger(philo, "is sleeping");
 }
 
 void	*watching(void *ptr)
@@ -88,29 +100,14 @@ void	*watching(void *ptr)
 	int		i;
 
 	philo = (t_philo **)ptr;
-	pthread_mutex_lock(&((*philo)->vars->start_lock));
 	pthread_mutex_unlock(&((*philo)->vars->start_lock));
+	(*philo)->vars->initial_timeval = get_time_milliseconds((*philo)->tv);
 	i = 0;
 	while (!all_is_finished(philo))
 	{
-		if (died(philo, i))
+		if (died(philo, i) || all_ate(philo))
 			break ;
-		if (have_tought(philo[i]))
-			logger(philo[i], "is thinking");
-		else if (had_fork(philo[i]))
-			logger(philo[i], "has taken a fork");
-		else if (have_ate(philo[i]))
-		{
-			logger(philo[i], "is eating");
-			if ((*philo)->vars->times_must_eat != -1 && all_ate(philo))
-			{
-				printf("all ate\n");
-				set_all_finished(philo);
-				break ;
-			}
-		}
-		else if (have_slept(philo[i]))
-			logger(philo[i], "is sleeping");
+		log_actions(philo[i]);
 		if (++i == (*philo)->vars->number_of_philosophers)
 			i = 0;
 	}

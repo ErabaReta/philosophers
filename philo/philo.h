@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:27 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/08/10 19:13:08 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/08 21:17:36 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,33 +56,33 @@ typedef struct s_philo
 }	t_philo;
 
 //====================================================
+
 size_t	get_time_milliseconds(struct timeval tv);
 int		is_finished(t_philo *philo);
 int		all_is_finished(t_philo **philo);
 //====================================================
+
 long	ft_philo_atoi(const char *str);
 void	*routine(void *ptr);
 t_philo	**init_vars(t_vars *vars);
 int		exiter(int err, t_philo **philo, t_vars vars);
 //====================================================
+
 void	*watching(void *ptr);
 int		time_to_eat(t_philo *philo);
 void	set_all_finished(t_philo **philo);
 //===== loggers ======================================
-void	logger(t_philo *philo, char *msg);
+
+int		logger(t_philo *philo, char *msg);
 int		have_tought(t_philo *philo);
 int		had_fork(t_philo *philo);
 int		have_ate(t_philo *philo);
 int		have_slept(t_philo *philo);
-//====================================================
-void	ft_putnbr(int n);
-void	print_str(char *str);
-void	ft_putchar(char c);
 //=====================================================
 int		parsing(t_vars *vars, char **av, int ac);
 void	eating(t_philo *philo);
 //===
-int		create_lonely_philo(t_vars *vars, t_philo **philo, pthread_t *watcher);
+int		create_lonely_philo(t_vars *vars, t_philo **philo);
 //===
 void	wait_for(t_philo *philo, size_t time);
 

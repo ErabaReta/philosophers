@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/09/05 00:56:25 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/08 21:26:23 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ size_t	get_time_milliseconds(struct timeval tv)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	create_threads(t_vars *vars, t_philo **philo, pthread_t	*watcher)
+int	create_threads(t_vars *vars, t_philo **philo)
 {
 	int	i;
 
@@ -44,15 +44,10 @@ int	create_threads(t_vars *vars, t_philo **philo, pthread_t	*watcher)
 		}
 		i++;
 	}
-	if (pthread_create(watcher, NULL, watching, philo) != 0)
-	{
-		printf("failed to create watcher thread\n");
-		return (-1);
-	}
-	i = 0;
 	vars->initial_timeval = get_time_milliseconds((*philo)->tv);
-	while (i < vars->number_of_philosophers)
-		philo[i++]->last_eat = get_time_milliseconds((*philo)->tv);
+	i = -1;
+	while (++i < vars->number_of_philosophers)
+		philo[i]->last_eat = get_time_milliseconds((philo[i])->tv);
 	return (0);
 }
 
@@ -73,7 +68,6 @@ int	main(int ac, char **av)
 	int			i;
 	t_philo		**philo;
 	t_vars		vars;
-	pthread_t	watcher;
 
 	if (parsing(&vars, av, ac) == -1)
 		return (returner(ac, vars));
@@ -85,14 +79,13 @@ int	main(int ac, char **av)
 	}
 	pthread_mutex_lock(&(vars.start_lock));
 	if (vars.number_of_philosophers == 1)
-		create_lonely_philo(&vars, philo, &watcher);
-	else if (create_threads(&vars, philo, &watcher) == -1)
+		create_lonely_philo(&vars, philo);
+	else if (create_threads(&vars, philo) == -1)
 		return (exiter(4, philo, vars));
-	pthread_mutex_unlock(&(vars.start_lock));
+	watching(philo);
 	i = 0;
 	while (i < vars.number_of_philosophers)
 		pthread_join(vars.philos[i++], NULL);
 	set_all_finished(philo);
-	pthread_join(watcher, NULL);
 	return (exiter(0, philo, vars));
 }
