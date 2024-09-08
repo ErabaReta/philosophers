@@ -3,23 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   logged_checkers.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eouhrich <eouhrich@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 16:24:52 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/06/10 22:36:10 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/08 21:22:10 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	logger(t_philo *philo, char *msg)
+int	logger(t_philo *philo, char *msg)
 {
 	if (is_finished(philo))
 	{
-		return ;
+		return (1);
 	}
 	printf("%lu %d %s\n", get_time_milliseconds(philo->tv)
-		- philo->vars->initial_timeval, philo->id + 1, msg);
+		- philo->vars->initial_timeval, philo->id, msg);
+	return (1);
 }
 
 int	have_tought(t_philo *philo)
@@ -53,7 +54,6 @@ int	have_ate(t_philo *philo)
 	pthread_mutex_lock(&(philo->eat_lock));
 	if (philo->eat_logged == 0)
 	{
-		philo->eat_logged = 1;
 		pthread_mutex_unlock(&(philo->eat_lock));
 		return (1);
 	}

@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 21:10:04 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/07/29 11:42:38 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/08 21:18:33 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ t_philo	**init_philos(t_philo **philo, t_vars *vars)
 			return (NULL);
 		}
 		philo[i]->vars = vars;
-		philo[i]->id = i;
+		philo[i]->id = i + 1;
 		init_philos_locks(philo, vars, i);
-		philo[i]->think_logged = 1;
+		philo[i]->think_logged = 0;
 		philo[i]->fork_logged = 1;
 		philo[i]->eat_logged = 1;
 		philo[i]->sleep_logged = 1;

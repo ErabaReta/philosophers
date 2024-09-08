@@ -6,7 +6,7 @@
 /*   By: eouhrich <eouhrich@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 14:58:33 by eouhrich          #+#    #+#             */
-/*   Updated: 2024/09/05 00:48:54 by eouhrich         ###   ########.fr       */
+/*   Updated: 2024/09/08 21:19:17 by eouhrich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,7 @@ void	*lonely_routine(void *ptr)
 	philo = (t_philo *)ptr;
 	pthread_mutex_lock(&(philo->vars->start_lock));
 	pthread_mutex_unlock(&(philo->vars->start_lock));
-	pthread_mutex_lock(&(philo->think_lock));
-	philo->think_logged = 0;
-	pthread_mutex_unlock(&(philo->think_lock));
+	philo->last_eat = get_time_milliseconds(philo->tv);
 	pthread_mutex_lock(&philo->vars->forks[0]);
 	pthread_mutex_lock(&(philo->fork_lock));
 	philo->fork_logged = 0;
@@ -32,16 +30,11 @@ void	*lonely_routine(void *ptr)
 	return (philo);
 }
 
-int	create_lonely_philo(t_vars *vars, t_philo **philo, pthread_t	*watcher)
+int	create_lonely_philo(t_vars *vars, t_philo **philo)
 {
 	if (pthread_create(&(vars->philos[0]), NULL, lonely_routine, philo[0]) != 0)
 	{
 		printf("failed to create philo thread\n");
-		return (-1);
-	}
-	if (pthread_create(watcher, NULL, watching, philo) != 0)
-	{
-		printf("failed to create watcher thread\n");
 		return (-1);
 	}
 	vars->initial_timeval = get_time_milliseconds((*philo)->tv);
